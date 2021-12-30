@@ -1,5 +1,6 @@
 #include "extras.h"
 #include "idt.h"
+#include "irq.h"
 #include "IOPort.h"
 #include <stdint.h>
 

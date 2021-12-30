@@ -423,6 +423,8 @@ _start:
     call irq_install
     sti
 
+    call timer_install
+
 	# Call the global constructors.
 	call _init
 
@@ -431,7 +433,7 @@ _start:
 	call kernel_main
 
 	# Hang if kernel_main unexpectedly returns.
-	cli
+#	cli
 1:	hlt
 	jmp 1b
 .size _start, . - _start
