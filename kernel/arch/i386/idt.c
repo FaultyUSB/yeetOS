@@ -32,3 +32,4 @@ void idt_install()
     /* Load location of IDT in CPUs register */
     idt_load();
 }
+

@@ -81,8 +81,8 @@ idt_load:
 # Divide by zero exception
 isr0:
     cli 
-    push $0x5 # Push error code (0 if error code won't exist)
-    push $0x5 # Push exception number
+    push $0x0 # Push error code (0 if error code won't exist)
+    push $0x0 # Push exception number
     jmp isr_common_stub
 
 isr1:
@@ -268,6 +268,140 @@ isr_common_stub:
     add $8, %esp
     iret 
 
+# Adding IRQ support 
+.section .text
+.global irq0
+.global irq1
+.global irq2
+.global irq3
+.global irq4
+.global irq5
+.global irq6
+.global irq7
+.global irq8
+.global irq9
+.global irq10
+.global irq11
+.global irq12
+.global irq13
+.global irq14
+.global irq15
+
+irq0:
+    cli
+    push $0 # Pushing a dummy error code onto the stack
+    push $32
+    jmp irq_common_stub
+irq1:
+    cli
+    push $0 # Pushing a dummy error code onto the stack
+    push $33
+    jmp irq_common_stub
+irq2:
+    cli
+    push $0 # Pushing a dummy error code onto the stack
+    push $34
+    jmp irq_common_stub
+irq3:
+    cli
+    push $0 # Pushing a dummy error code onto the stack
+    push $35
+    jmp irq_common_stub
+irq4:
+    cli
+    push $0 # Pushing a dummy error code onto the stack
+    push $36
+    jmp irq_common_stub
+irq5:
+    cli
+    push $0 # Pushing a dummy error code onto the stack
+    push $37
+    jmp irq_common_stub
+irq6:
+    cli
+    push $0 # Pushing a dummy error code onto the stack
+    push $38
+    jmp irq_common_stub
+irq7:
+    cli
+    push $0 # Pushing a dummy error code onto the stack
+    push $39
+    jmp irq_common_stub
+irq8:
+    cli
+    push $0 # Pushing a dummy error code onto the stack
+    push $40
+    jmp irq_common_stub
+irq9:
+    cli
+    push $0 # Pushing a dummy error code onto the stack
+    push $41
+    jmp irq_common_stub
+irq10:
+    cli
+    push $0 # Pushing a dummy error code onto the stack
+    push $42
+    jmp irq_common_stub
+irq11:
+    cli
+    push $0 # Pushing a dummy error code onto the stack
+    push $43
+    jmp irq_common_stub
+irq12:
+    cli
+    push $0 # Pushing a dummy error code onto the stack
+    push $44
+    jmp irq_common_stub
+irq13:
+    cli
+    push $0 # Pushing a dummy error code onto the stack
+    push $45
+    jmp irq_common_stub
+irq14:
+    cli
+    push $0 # Pushing a dummy error code onto the stack
+    push $46
+    jmp irq_common_stub
+irq15:
+    cli
+    push $0 # Pushing a dummy error code onto the stack
+    push $47
+    jmp irq_common_stub
+
+.extern irq_handler
+
+irq_common_stub:
+    cld
+
+    pusha
+    push %ds
+    push %es
+    push %fs
+    push %gs
+
+    mov $0x10, %ax
+    mov %ax, %ds
+    mov %ax, %es
+    mov %ax, %fs
+    mov %ax, %gs
+
+    movl %esp, %eax
+    pushl %eax
+    call irq_handler
+    #mov %eax, %esp
+    #push %eax
+    #mov $fault_handler, %eax
+    #call *%eax
+    pop %eax
+    pop %gs
+    pop %fs
+    pop %es
+    pop %ds
+    popa
+    add $8, %esp
+    iret 
+
+
 # The kernel entry point.
 .section .text
 .global _start
@@ -282,8 +416,12 @@ _start:
     call idt_install
     sti
 
-    # Populate IDT with ISRs
+    # Populate IDT with ISRs for exceptions (entries 0 - 31)
     call isrs_install
+
+    # Popu IDT with ISRs for handling IRQs (entires 32 - 47)
+    call irq_install
+    sti
 
 	# Call the global constructors.
 	call _init
