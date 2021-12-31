@@ -423,7 +423,8 @@ _start:
     call irq_install
     sti
 
-    call timer_install
+    #call timer_install
+    call keyboard_install
 
 	# Call the global constructors.
 	call _init
