@@ -1,1 +1,1 @@
-Learning about building an operating system
+yeetOS: learning about operating system development
